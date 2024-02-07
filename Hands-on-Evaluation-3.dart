@@ -17,17 +17,11 @@ class MathUtils {
     return pow(base, exponent).toDouble();
   }
 
-  static double add(double a, double b) {
-    return a + b;
-  }
+  static double add(double a, double b) => a + b;
 
-  static double subtract(double a, double b) {
-    return a - b;
-  }
+  static double subtract(double a, double b) => a - b;
 
-  static double multiply(double a, double b) {
-    return a * b;
-  }
+  static double multiply(double a, double b) => a * b;
 
   static double divide(double a, double b) {
     if (b != 0) {
@@ -40,6 +34,17 @@ class MathUtils {
 }
 
 void main() {
+  Map<int, Function> operations = {
+    1: () => operateUnary(MathUtils.squareRoot),
+    2: () => operateUnary((n) => MathUtils.factorial(n.toInt()).toDouble()),
+    3: () => operateBinary(MathUtils.power),
+    4: () => operateBinary(MathUtils.add),
+    5: () => operateBinary(MathUtils.subtract),
+    6: () => operateBinary(MathUtils.multiply),
+    7: () => operateBinary(MathUtils.divide),
+    8: () => exitProgram(),
+  };
+
   while (true) {
     print('\n=== Menu ===');
     print('1. Square Root');
@@ -52,60 +57,52 @@ void main() {
     print('8. Exit');
     print('=============');
 
-    print('Enter your choice:');
-    int choice = int.parse(stdin.readLineSync()!);
+    int choice = getUserChoice();
 
-    if (choice == 8) {
-      print('Exiting the program. Goodbye!');
-      break;
+    if (operations.containsKey(choice)) {
+      operations[choice]!();
+    } else {
+      print('Invalid choice');
     }
+  }
+}
 
-    print('Enter the first number:');
-    double num1 = double.parse(stdin.readLineSync()!);
+void operateUnary(Function operation) {
+  double num1 = getUserNumber('Enter the number:');
+  double result = operation(num1);
+  print('Result: $result');
+}
 
-    num result;
+void operateBinary(Function operation) {
+  double num1 = getUserNumber('Enter the first number:');
+  double num2 = getUserNumber('Enter the second number:');
+  double result = operation(num1, num2);
+  print('Result: $result');
+}
 
-    switch (choice) {
-      case 1:
-        result = MathUtils.squareRoot(num1);
-        print('Square root of $num1: $result');
-        break;
-      case 2:
-        result = MathUtils.factorial(num1.toInt());
-        print('Factorial of ${num1.toInt()}: $result');
-        break;
-      case 3:
-        print('Enter the exponent:');
-        int exponent = int.parse(stdin.readLineSync()!);
-        result = MathUtils.power(num1, exponent);
-        print('Result: $result');
-        break;
-      case 4:
-        print('Enter the second number:');
-        double num2 = double.parse(stdin.readLineSync()!);
-        result = MathUtils.add(num1, num2);
-        print('Result: $result');
-        break;
-      case 5:
-        print('Enter the second number:');
-        double num2 = double.parse(stdin.readLineSync()!);
-        result = MathUtils.subtract(num1, num2);
-        print('Result: $result');
-        break;
-      case 6:
-        print('Enter the second number:');
-        double num2 = double.parse(stdin.readLineSync()!);
-        result = MathUtils.multiply(num1, num2);
-        print('Result: $result');
-        break;
-      case 7:
-        print('Enter the second number:');
-        double num2 = double.parse(stdin.readLineSync()!);
-        result = MathUtils.divide(num1, num2);
-        print('Result: $result');
-        break;
-      default:
-        print('Invalid choice');
+void exitProgram() {
+  print('Exiting the program. Goodbye!');
+  exit(0);
+}
+
+int getUserChoice() {
+  while (true) {
+    try {
+      print('\nEnter your choice:');
+      return int.parse(stdin.readLineSync()!);
+    } catch (e) {
+      print('Invalid input. Please enter a valid number.');
+    }
+  }
+}
+
+double getUserNumber(String prompt) {
+  while (true) {
+    try {
+      print(prompt);
+      return double.parse(stdin.readLineSync()!);
+    } catch (e) {
+      print('Invalid input. Please enter a valid number.');
     }
   }
 }
